@@ -64,12 +64,28 @@ button{font:inherit;cursor:pointer}
 
 /* bottle 360 */
 .spin .wrap{grid-template-columns:.9fr 1.1fr;align-items:center}
-.stage{background:radial-gradient(120% 90% at 50% 30%,#FFFFFF 0%,#DDF4EF 55%,#9FDCD5 100%);border-radius:36px;aspect-ratio:1;position:relative;overflow:hidden;touch-action:pan-y;cursor:grab;user-select:none}
-.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .5s}
-.stage .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:opacity .5s}
+.viewer{display:grid;gap:16px;min-width:0}
+.stage{background:#A9E0D8;border-radius:36px;aspect-ratio:1;position:relative;overflow:hidden;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;outline:none;box-shadow:inset 0 0 0 1px rgba(11,110,107,.08)}
+.stage:focus-visible{box-shadow:0 0 0 3px var(--ink)}
+.stage.grabbing{cursor:grabbing}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .6s ease}
+.stage .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .6s ease;filter:blur(6px);transform:scale(1.04)}
 .stage.ready canvas{opacity:1}.stage.ready .poster{opacity:0}
-.stage .loading{position:absolute;left:50%;top:16px;transform:translateX(-50%);font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.55}
-.stage.ready .loading,.stage.no3d .loading{display:none}
+.stage .load{position:absolute;left:24px;right:24px;top:18px;height:3px;border-radius:2px;background:rgba(11,110,107,.15);overflow:hidden;transition:opacity .5s}
+.stage .load i{display:block;height:100%;background:var(--teal-deep);transform-origin:left;transform:scaleX(0);transition:transform .25s}
+.stage.loaded .load{opacity:0}
+.stage .deg{position:absolute;right:20px;top:30px;font-family:var(--display);font-weight:700;font-size:15px;color:var(--teal-deep);font-variant-numeric:tabular-nums;opacity:.8}
+/* slider */
+.scrub{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;background:var(--white);border-radius:999px;padding:10px 18px;box-shadow:0 1px 0 rgba(11,110,107,.08),0 10px 30px rgba(11,110,107,.10)}
+.scrub span{font-weight:800;font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.55;font-variant-numeric:tabular-nums}
+.scrub input{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;margin:0;cursor:pointer;--p:0%}
+.scrub input::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(90deg,var(--teal) var(--p),var(--mint) var(--p)),var(--mint)}
+.scrub input::-moz-range-track{height:6px;border-radius:3px;background:var(--mint)}
+.scrub input::-moz-range-progress{height:6px;border-radius:3px;background:var(--teal)}
+.scrub input::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;background:var(--ink);border:5px solid var(--white);box-shadow:0 2px 10px rgba(14,20,20,.3);transition:transform .15s}
+.scrub input::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--ink);border:5px solid var(--white);box-shadow:0 2px 10px rgba(14,20,20,.3)}
+.scrub input:active::-webkit-slider-thumb{transform:scale(1.15)}
+.scrub input:focus-visible{outline:none}.scrub input:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px var(--sun)}
 
 /* game */
 .play{background:var(--ink);color:var(--paper)}
@@ -88,7 +104,7 @@ button{font:inherit;cursor:pointer}
 .views button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .specs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .specs div{background:var(--mint);border-radius:20px;padding:14px 16px}
-.specs b{display:block;font-family:var(--display);font-size:22px}
+.specs b{display:block;white-space:nowrap;font-family:var(--display);font-size:22px}
 .specs span{font-size:13px;font-weight:700;opacity:.7}
 @media (max-width:820px){.spin .wrap{grid-template-columns:1fr}}
 
@@ -197,12 +213,12 @@ footer p{justify-self:end;text-align:right;font-weight:700;font-size:14px}
     <div style="display:grid;gap:22px">
       <span class="eyebrow" style="color:var(--teal-deep)" data-uz="Butilka" data-ru="Бутылка">Butilka</span>
       <h2 data-uz="Aylantiring va oʻqing" data-ru="Покрутите и прочитайте">Aylantiring va oʻqing</h2>
-      <p class="lead" data-uz="3D butilkani sichqoncha yoki barmoq bilan aylantiring: old tomoni, tarkibi va ishlab chiqaruvchi." data-ru="Вращайте 3D-бутылку мышкой или пальцем: лицевая сторона, состав и производитель.">3D butilkani sichqoncha yoki barmoq bilan aylantiring: old tomoni, tarkibi va ishlab chiqaruvchi.</p>
+      <p class="lead" data-uz="Butilkani 360° aylantiring: suring yoki slayderni torting." data-ru="Поверните бутылку на 360°: тяните её или двигайте слайдер.">Butilkani 360° aylantiring: suring yoki slayderni torting.</p>
       <div class="views" role="group" aria-label="Ракурс">
-        <button data-v="0" aria-pressed="false" data-uz="Old" data-ru="Фронт">Old</button>
-        <button data-v="1" aria-pressed="false">3/4</button>
-        <button data-v="2" aria-pressed="false" data-uz="Tarkibi" data-ru="Состав">Tarkibi</button>
-        <button data-v="3" aria-pressed="false" data-uz="Orqa" data-ru="Тыл">Orqa</button>
+        <button data-deg="0" aria-pressed="false" data-uz="Old" data-ru="Фронт">Old</button>
+        <button data-deg="40" aria-pressed="false">3/4</button>
+        <button data-deg="270" aria-pressed="false" data-uz="Tarkibi" data-ru="Состав">Tarkibi</button>
+        <button data-deg="180" aria-pressed="false" data-uz="Orqa" data-ru="Тыл">Orqa</button>
       </div>
       <div class="specs">
         <div><b>950 ml</b><span>PET</span></div>
@@ -210,11 +226,15 @@ footer p{justify-self:end;text-align:right;font-weight:700;font-size:14px}
         <div><b>5–25 °C</b><span data-uz="saqlash" data-ru="хранение">saqlash</span></div>
       </div>
     </div>
-    <div class="stage" id="stage" role="img" aria-label="EZIO, вращение бутылки">
-      <img class="poster" src="img/front.jpg" alt="">
-      <canvas id="bottle3d"></canvas>
-      <span class="loading">3D…</span>
-      <span class="hint" data-uz="← aylantiring →" data-ru="← вращайте →">← aylantiring →</span>
+    <div class="viewer">
+      <div class="stage" id="stage" role="img" aria-label="EZIO 360°">
+        <img class="poster" src="img/360/600/00.webp" alt="">
+        <canvas id="spin360"></canvas>
+        <div class="load"><i id="spin-load"></i></div>
+        <span class="deg" id="spin-deg">0°</span>
+        <span class="hint" data-uz="← aylantiring →" data-ru="← вращайте →">← aylantiring →</span>
+      </div>
+      <label class="scrub"><span>0°</span><input id="spin-range" type="range" min="0" max="360" step="0.1" value="0" aria-label="360°"><span>360°</span></label>
     </div>
   </div>
 </section>
@@ -412,8 +432,7 @@ footer p{justify-self:end;text-align:right;font-weight:700;font-size:14px}
 })();
 </script>
 
-<script type="importmap">{"imports":{"three":"./js/vendor/three.module.min.js","three/addons/":"./js/vendor/addons/"}}</script>
-<script type="module" src="js/bottle3d.js"></script>
+<script src="js/spin360.js"></script>
 <script src="js/game.js"></script>
 </body>
 </html>
