@@ -64,9 +64,24 @@ button{font:inherit;cursor:pointer}
 
 /* bottle 360 */
 .spin .wrap{grid-template-columns:.9fr 1.1fr;align-items:center}
-.stage{background:var(--white);border-radius:36px;aspect-ratio:1;position:relative;overflow:hidden;touch-action:pan-y;cursor:grab;user-select:none}
-.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .18s}
-.stage img.on{opacity:1}
+.stage{background:radial-gradient(120% 90% at 50% 30%,#FFFFFF 0%,#DDF4EF 55%,#9FDCD5 100%);border-radius:36px;aspect-ratio:1;position:relative;overflow:hidden;touch-action:pan-y;cursor:grab;user-select:none}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .5s}
+.stage .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:opacity .5s}
+.stage.ready canvas{opacity:1}.stage.ready .poster{opacity:0}
+.stage .loading{position:absolute;left:50%;top:16px;transform:translateX(-50%);font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.55}
+.stage.ready .loading,.stage.no3d .loading{display:none}
+
+/* game */
+.play{background:var(--ink);color:var(--paper)}
+.play .wrap{grid-template-columns:1fr}
+.screen{position:relative;height:clamp(240px,34vw,360px);border-radius:32px;overflow:hidden;box-shadow:0 0 0 3px var(--teal)}
+.screen canvas{display:block;width:100%;height:100%;touch-action:manipulation;cursor:pointer}
+.screen canvas:focus-visible{outline:3px solid var(--sun);outline-offset:-3px}
+.pad{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.pad button{border:0;border-radius:999px;padding:14px 22px;font-weight:800;font-size:15px;background:var(--teal);color:var(--ink);touch-action:manipulation}
+.pad button+button{background:var(--sun)}
+.pad .keys{font-size:13px;opacity:.7;margin-left:auto}
+@media (max-width:600px){.screen{height:260px}.pad .keys{display:none}.pad button{flex:1}}
 .stage .hint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);background:var(--mint);border-radius:999px;padding:8px 16px;font-weight:800;font-size:13px;white-space:nowrap}
 .views{display:flex;gap:8px;flex-wrap:wrap}
 .views button{border:2px solid var(--ink);background:transparent;border-radius:999px;padding:10px 16px;font-weight:800;font-size:14px}
@@ -155,6 +170,7 @@ footer p{justify-self:end;text-align:right;font-weight:700;font-size:14px}
       <a href="#feast" data-uz="Test" data-ru="Тест">Test</a>
       <a href="#how" data-uz="Qanday ishlaydi" data-ru="Как работает">Qanday ishlaydi</a>
       <a href="#min" data-uz="Tarkibi" data-ru="Состав">Tarkibi</a>
+      <a href="#play" data-uz="Oʻyin" data-ru="Игра">Oʻyin</a>
       <div class="lang" role="group" aria-label="Til / Язык"><button id="l-uz" aria-pressed="true">UZ</button><button id="l-ru" aria-pressed="false">RU</button></div>
     </div>
     <a href="#buy" class="buy" data-uz="Sotib olish" data-ru="Купить">Sotib olish</a>
@@ -181,9 +197,9 @@ footer p{justify-self:end;text-align:right;font-weight:700;font-size:14px}
     <div style="display:grid;gap:22px">
       <span class="eyebrow" style="color:var(--teal-deep)" data-uz="Butilka" data-ru="Бутылка">Butilka</span>
       <h2 data-uz="Aylantiring va oʻqing" data-ru="Покрутите и прочитайте">Aylantiring va oʻqing</h2>
-      <p class="lead" data-uz="Butilkani sichqoncha yoki barmoq bilan suring: old tomoni, tarkibi va ishlab chiqaruvchi." data-ru="Потяните бутылку мышкой или пальцем: лицевая сторона, состав и производитель.">Butilkani sichqoncha yoki barmoq bilan suring: old tomoni, tarkibi va ishlab chiqaruvchi.</p>
+      <p class="lead" data-uz="3D butilkani sichqoncha yoki barmoq bilan aylantiring: old tomoni, tarkibi va ishlab chiqaruvchi." data-ru="Вращайте 3D-бутылку мышкой или пальцем: лицевая сторона, состав и производитель.">3D butilkani sichqoncha yoki barmoq bilan aylantiring: old tomoni, tarkibi va ishlab chiqaruvchi.</p>
       <div class="views" role="group" aria-label="Ракурс">
-        <button data-v="0" aria-pressed="true" data-uz="Old" data-ru="Фронт">Old</button>
+        <button data-v="0" aria-pressed="false" data-uz="Old" data-ru="Фронт">Old</button>
         <button data-v="1" aria-pressed="false">3/4</button>
         <button data-v="2" aria-pressed="false" data-uz="Tarkibi" data-ru="Состав">Tarkibi</button>
         <button data-v="3" aria-pressed="false" data-uz="Orqa" data-ru="Тыл">Orqa</button>
@@ -195,8 +211,10 @@ footer p{justify-self:end;text-align:right;font-weight:700;font-size:14px}
       </div>
     </div>
     <div class="stage" id="stage" role="img" aria-label="EZIO, вращение бутылки">
-      <img src="img/front.jpg" alt="" class="on"><img src="img/hero.jpg" alt=""><img src="img/side.jpg" alt=""><img src="img/back.jpg" alt="">
-      <span class="hint" data-uz="← suring →" data-ru="← тяните →">← suring →</span>
+      <img class="poster" src="img/front.jpg" alt="">
+      <canvas id="bottle3d"></canvas>
+      <span class="loading">3D…</span>
+      <span class="hint" data-uz="← aylantiring →" data-ru="← вращайте →">← aylantiring →</span>
     </div>
   </div>
 </section>
@@ -271,6 +289,24 @@ footer p{justify-self:end;text-align:right;font-weight:700;font-size:14px}
   </div>
 </section>
 
+<section class="band play" id="play">
+  <div class="wrap">
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap">
+      <div style="display:grid;gap:14px">
+        <span class="eyebrow" style="color:var(--teal)" data-uz="Oʻyin" data-ru="Игра">Oʻyin</span>
+        <h2 data-uz="EZIO Run: jigʻildondan qoching" data-ru="EZIO Run: убегай от изжоги">EZIO Run: jigʻildondan qoching</h2>
+      </div>
+      <p class="lead" style="max-width:40ch;opacity:.85" data-uz="Somsa, osh va shashlikdan sakrang, olovdan egiling, sariq koʻpiklarni yigʻing." data-ru="Прыгайте через самсу, плов и шашлык, пригибайтесь от огня, собирайте жёлтые пузырьки.">Somsa, osh va shashlikdan sakrang, olovdan egiling, sariq koʻpiklarni yigʻing.</p>
+    </div>
+    <div class="screen"><canvas id="game" tabindex="0" aria-label="EZIO Run"></canvas></div>
+    <div class="pad">
+      <button id="g-jump" data-uz="↑ Sakrash" data-ru="↑ Прыжок">↑ Sakrash</button>
+      <button id="g-duck" data-uz="↓ Egilish" data-ru="↓ Пригнуться">↓ Egilish</button>
+      <span class="keys" data-uz="Probel / ↑ — sakrash · ↓ — egilish" data-ru="Пробел / ↑ — прыжок · ↓ — пригнуться">Probel / ↑ — sakrash · ↓ — egilish</span>
+    </div>
+  </div>
+</section>
+
 <section class="band faq" id="buy">
   <div class="wrap">
     <div>
@@ -312,6 +348,7 @@ footer p{justify-self:end;text-align:right;font-weight:700;font-size:14px}
     document.getElementById('l-uz').setAttribute('aria-pressed',l==='uz');
     document.getElementById('l-ru').setAttribute('aria-pressed',l==='ru');
     update(); showIon(cur);
+    document.dispatchEvent(new Event('ezio:lang'));
     try{localStorage.setItem('ezio-lang',l)}catch(e){}
   }
   document.getElementById('l-uz').onclick=()=>setLang('uz');
@@ -336,17 +373,6 @@ footer p{justify-self:end;text-align:right;font-weight:700;font-size:14px}
     if(!reduce)requestAnimationFrame(tick);
   }
   tick();
-
-  // bottle spin
-  const stage=document.getElementById('stage'),imgs=[...stage.querySelectorAll('img')],vb=[...document.querySelectorAll('.views button')];
-  let vi=0;
-  function setV(i){vi=(i+4)%4;imgs.forEach((im,k)=>im.classList.toggle('on',k===vi));vb.forEach((b,k)=>b.setAttribute('aria-pressed',k===vi));}
-  vb.forEach((b,k)=>b.onclick=()=>setV(k));
-  let sx=null,acc=0;
-  stage.addEventListener('pointerdown',e=>{sx=e.clientX;acc=0;stage.setPointerCapture(e.pointerId);stage.style.cursor='grabbing'});
-  stage.addEventListener('pointermove',e=>{if(sx===null)return;acc+=e.clientX-sx;sx=e.clientX;if(Math.abs(acc)>60){setV(vi+(acc>0?1:-1));acc=0;}});
-  const end=()=>{sx=null;stage.style.cursor='grab'};
-  stage.addEventListener('pointerup',end);stage.addEventListener('pointercancel',end);
 
   // feast meter
   const fb=[...document.querySelectorAll('#foods button')];
@@ -386,5 +412,8 @@ footer p{justify-self:end;text-align:right;font-weight:700;font-size:14px}
 })();
 </script>
 
+<script type="importmap">{"imports":{"three":"./js/vendor/three.module.min.js","three/addons/":"./js/vendor/addons/"}}</script>
+<script type="module" src="js/bottle3d.js"></script>
+<script src="js/game.js"></script>
 </body>
 </html>
